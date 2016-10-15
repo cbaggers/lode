@@ -1,12 +1,14 @@
 (in-package :lode)
 
-(defvar *worlds* nil)
+(defvar *worlds* (make-array 0 :element-type 'phys-world :adjustable t
+                               :fill-pointer 0))
 
 (defun reset-worlds ()
   (setf *worlds* (make-array 0 :element-type 'phys-world :adjustable t
                                :fill-pointer 0)))
 
 (defun create-world ()
+  (assert *initialized*)
   (let ((world (make-phys-world :ptr (dworldcreate))))
     (vector-push-extend world *worlds*)
     world))

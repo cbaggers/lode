@@ -1,7 +1,5 @@
 (in-package :lode)
 
-(defvar *initialized* nil)
-
 (defun %init ()
   (if *initialized*
       (progn

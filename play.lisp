@@ -15,7 +15,8 @@
 
 (defvar my-obj nil)
 
-(defun init ()
+(defun init-play ()
+  (init)
   (unless my-world
     (setf my-world (create-world))
     (setf (world-gravity my-world) (v! 0 -1 0))
@@ -37,7 +38,8 @@
                                            (- (* (random 1s0) 2s0) 1s0))
                                        (- (* (random 1s0) 10) 5)))
     (phys-object-set-mass-box my-obj 0.5 (v! 2 2 2))
-    (phys-object-add-geometry my-obj (create-box my-col-space (v! 2 2 2)))))
+    (phys-object-add-geometry my-obj (create-box my-col-space (v! 2 2 2))))
+  t)
 
 (defun deinit ()
   ;; {TODO}
