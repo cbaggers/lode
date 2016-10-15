@@ -236,3 +236,136 @@
 
 ;; ;;dworldid
 ;; dbodygetworld
+
+;;------------------------------------------------------------
+
+(defun phys-body-set-mass-zero (phys-body)
+  (let* ((body-ptr (phys-body-ptr phys-body)))
+    (cffi:with-foreign-object (m '(:struct dmass))
+      (dmasssetzero m)
+      (dbodysetmass body-ptr m))
+    phys-body))
+
+;;------------------------------------------------------------
+
+(defun phys-body-set-mass-box (phys-body density side-lengths-vec3)
+  (let* ((body-ptr (phys-body-ptr phys-body)))
+    (cffi:with-foreign-object (m '(:struct dmass))
+      (dmasssetbox m (float density)
+                   (v:x side-lengths-vec3)
+                   (v:y side-lengths-vec3)
+                   (v:z side-lengths-vec3))
+      (dbodysetmass body-ptr m))
+    phys-body))
+
+(defun phys-body-set-mass-box-total (phys-body total-mass side-lengths-vec3)
+  (let* ((body-ptr (phys-body-ptr phys-body)))
+    (cffi:with-foreign-object (m '(:struct dmass))
+      (dmasssetboxtotal m (float total-mass)
+                        (v:x side-lengths-vec3)
+                        (v:y side-lengths-vec3)
+                        (v:z side-lengths-vec3))
+      (dbodysetmass body-ptr m))
+    phys-body))
+
+;;------------------------------------------------------------
+
+(defun phys-body-set-mass-sphere (phys-body density radius)
+  (let* ((body-ptr (phys-body-ptr phys-body)))
+    (cffi:with-foreign-object (m '(:struct dmass))
+      (dmasssetsphere m (float density) (float radius))
+      (dbodysetmass body-ptr m))
+    phys-body))
+
+(defun phys-body-set-mass-sphere-total (phys-body total-mass radius)
+  (let* ((body-ptr (phys-body-ptr phys-body)))
+    (cffi:with-foreign-object (m '(:struct dmass))
+      (dmasssetspheretotal m (float total-mass) (float radius))
+      (dbodysetmass body-ptr m))
+    phys-body))
+
+;;------------------------------------------------------------
+
+(defun phys-body-set-mass-cylinder (phys-body density direction radius length)
+  (assert (member direction '(:x :y :z)))
+  (let* ((body-ptr (phys-body-ptr phys-body)))
+    (cffi:with-foreign-object (m '(:struct dmass))
+      (dmasssetcylinder m
+                        (float density)
+                        (position direction '(:x :y :z))
+                        (float radius)
+                        (float length))
+      (dbodysetmass body-ptr m))
+    phys-body))
+
+(defun phys-body-set-mass-cylinder-total (phys-body total-mass direction radius
+                                          length)
+  (assert (member direction '(:x :y :z)))
+  (let* ((body-ptr (phys-body-ptr phys-body)))
+    (cffi:with-foreign-object (m '(:struct dmass))
+      (dmasssetcylinder m
+                        (float total-mass)
+                        (position direction '(:x :y :z))
+                        (float radius)
+                        (float length))
+      (dbodysetmass body-ptr m))
+    phys-body))
+
+;;------------------------------------------------------------
+
+(defun phys-body-set-mass-capped-cylinder (phys-body density direction radius
+                                           length)
+  (assert (member direction '(:x :y :z)))
+  (let* ((body-ptr (phys-body-ptr phys-body)))
+    (cffi:with-foreign-object (m '(:struct dmass))
+      (dmasssetcappedcylinder m
+                              (float density)
+                              (position direction '(:x :y :z))
+                              (float radius)
+                              (float length))
+      (dbodysetmass body-ptr m))
+    phys-body))
+
+(defun phys-body-set-mass-capped-cylinder-total (phys-body total-mass direction
+                                                 radius length)
+  (assert (member direction '(:x :y :z)))
+  (let* ((body-ptr (phys-body-ptr phys-body)))
+    (cffi:with-foreign-object (m '(:struct dmass))
+      (dmasssetcappedcylinder m
+                              (float total-mass)
+                              (position direction '(:x :y :z))
+                              (float radius)
+                              (float length))
+      (dbodysetmass body-ptr m))
+    phys-body))
+
+;;------------------------------------------------------------
+
+(defun phys-body-set-mass-capsule (phys-body density direction radius length)
+  (assert (member direction '(:x :y :z)))
+  (let* ((body-ptr (phys-body-ptr phys-body)))
+    (cffi:with-foreign-object (m '(:struct dmass))
+      (dmasssetcapsule m
+                        (float density)
+                        (position direction '(:x :y :z))
+                        (float radius)
+                        (float length))
+      (dbodysetmass body-ptr m))
+    phys-body))
+
+(defun phys-body-set-mass-capsule-total (phys-body total-mass direction radius
+                                         length)
+  (assert (member direction '(:x :y :z)))
+  (let* ((body-ptr (phys-body-ptr phys-body)))
+    (cffi:with-foreign-object (m '(:struct dmass))
+      (dmasssetcapsule m
+                        (float total-mass)
+                        (position direction '(:x :y :z))
+                        (float radius)
+                        (float length))
+      (dbodysetmass body-ptr m))
+    phys-body))
+
+;;------------------------------------------------------------
+
+;; dmasssettrimesh
