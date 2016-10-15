@@ -24,6 +24,14 @@
   ptr)
 
 (deftclass (phys-plane (:include phys-geometry)))
+(deftclass (phys-box (:include phys-geometry)))
+(deftclass (phys-capsule (:include phys-geometry)))
+(deftclass (phys-convex (:include phys-geometry)))
+(deftclass (phys-cylinder (:include phys-geometry)))
+(deftclass (phys-heightfield (:include phys-geometry)))
+(deftclass (phys-ray (:include phys-geometry)))
+(deftclass (phys-sphere (:include phys-geometry)))
+(deftclass (phys-trimesh (:include phys-geometry)))
 
 ;;------------------------------------------------------------
 
