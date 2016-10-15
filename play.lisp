@@ -42,3 +42,17 @@
 (defun deinit ()
   ;; {TODO}
   )
+
+;; walk-potentially-colliding determines which pairs of geoms in the
+;; space we pass to it may potentially intersect. We must also pass the address
+;; of a callback function that we will provide. The callback function is
+;; responsible for determining which of the potential intersections
+;; are actual collisions before adding the collision joints to our
+;; joint group called contactgroup, this gives us the chance to set
+;; the behaviour of these joints before adding them to the group. The
+;; second parameter is a pointer to any data that we may want to pass
+;; to our callback routine.  We will cover the details of the
+;; nearCallback routine in the next section.
+
+(defun step-physics ()
+  )
