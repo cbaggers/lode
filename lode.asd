@@ -6,7 +6,7 @@
   :license "BSD 2 Clause"
   :serial t
   :depends-on (#:raw-bindings-ode #:cffi #:uiop #:structy-defclass
-                                  #:rtg-math)
+                                  #:rtg-math #:fn)
   :components ((:file "package")
                (:file "extra-bindings")
                (:file "helpers")

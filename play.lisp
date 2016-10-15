@@ -35,4 +35,10 @@
           (m3:rotation-from-axis-angle (v! (- (* (random 1s0) 2s0) 1s0)
                                            (- (* (random 1s0) 2s0) 1s0)
                                            (- (* (random 1s0) 2s0) 1s0))
-                                       (- (* (random 1s0) 10) 5)))))
+                                       (- (* (random 1s0) 10) 5)))
+    (phys-object-set-mass-box my-obj 0.5 (v! 2 2 2))
+    (phys-object-add-geometry my-obj (create-box my-col-space (v! 2 2 2)))))
+
+(defun deinit ()
+  ;; {TODO}
+  )
