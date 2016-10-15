@@ -1,8 +1,5 @@
 (in-package :lode)
 
-(deftclass phys-collision-space
-  ptr)
-
 (defun create-collision-space (&key (kind :simple) parent-space)
   (let* ((parent-id (if parent-space
                         (phys-collision-space-ptr parent-space)

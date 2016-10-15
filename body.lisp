@@ -2,11 +2,6 @@
 
 ;;------------------------------------------------------------
 
-(deftclass (phys-body (:constructor %make-phys-body))
-  ptr)
-
-;;------------------------------------------------------------
-
 (defun make-phys-body (world)
   (let ((world-ptr (phys-world-ptr world)))
     (%make-phys-body :ptr (dbodycreate world-ptr))))

@@ -29,4 +29,10 @@
   (unless my-plane
     (setf my-plane (create-plane my-col-space)))
   (unless my-obj
-    (setf my-obj (make-phys-object my-world))))
+    (setf my-obj (make-phys-object my-world))
+    (setf (phys-object-position my-obj) (v! 0 10 -5))
+    (setf (phys-object-rotation my-obj)
+          (m3:rotation-from-axis-angle (v! (- (* (random 1s0) 2s0) 1s0)
+                                           (- (* (random 1s0) 2s0) 1s0)
+                                           (- (* (random 1s0) 2s0) 1s0))
+                                       (- (* (random 1s0) 10) 5)))))

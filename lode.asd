@@ -10,6 +10,7 @@
   :components ((:file "package")
                (:file "extra-bindings")
                (:file "helpers")
+               (:file "types")
                (:file "worlds")
                (:file "init")
                (:file "collision-space")

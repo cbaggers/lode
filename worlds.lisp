@@ -6,13 +6,15 @@
   (setf *worlds* (make-array 0 :element-type 'phys-world :adjustable t
                                :fill-pointer 0)))
 
-(deftclass phys-world
-  ptr)
-
 (defun create-world ()
   (let ((world (make-phys-world :ptr (dworldcreate))))
     (vector-push-extend world *worlds*)
     world))
+
+;;------------------------------------------------------------
+
+(defun add-phys-object-to-world (world phys-obj)
+  (vector-push-extend phys-obj (phys-world-objects world)))
 
 ;;------------------------------------------------------------
 
