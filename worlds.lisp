@@ -101,5 +101,5 @@
 
 ;;------------------------------------------------------------
 
-(defun step-world (world)
-  (dworldquickstep (phys-world-ptr world) 0.04))
+(defun step-world (world step-size)
+  (dworldquickstep (phys-world-ptr world) step-size))

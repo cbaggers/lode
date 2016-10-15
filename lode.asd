@@ -22,4 +22,5 @@
                (:file "joints")
                (:file "geometry")
                (:file "body")
-               (:file "object")))
+               (:file "object")
+               (:file "play")))
