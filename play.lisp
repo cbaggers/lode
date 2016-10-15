@@ -20,9 +20,9 @@
   (unless my-world
     (setf my-world (create-world))
     (setf (world-gravity my-world) (v! 0 -1 0))
-    ;;(setf (world-contact-max-correcting-velocity my-world) 0.9)
-    ;;(setf (world-contact-surface-layer my-world) 0.001)
-    ;;(setf (world-auto-disable my-world) t)
+    (setf (world-contact-max-correcting-velocity my-world) 0.9)
+    (setf (world-contact-surface-layer my-world) 0.001)
+    (setf (world-auto-disable my-world) t)
     )
   (unless my-col-space
     (setf my-col-space (create-collision-space)))
@@ -59,7 +59,7 @@
 
 (defun step-physics ()
   (step-collisions my-world my-col-space my-joint-group)
-  (step-world my-world 0.016)
+  (step-world my-world 0.04)
   (clear-joint-group my-joint-group))
 
 (defun step-loop ()

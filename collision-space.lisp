@@ -45,7 +45,7 @@
 
 ;;------------------------------------------------------------
 
-(defconstant +step-col-skip-size+ (cffi:foreign-type-size 'dcontactgeom))
+(defconstant +step-col-skip-size+ (cffi:foreign-type-size 'dcontact))
 
 (cffi:defcstruct col-data
   (world-ptr :pointer)
@@ -58,23 +58,33 @@
   (let* ((body-0 (dgeomgetbody geom-id-0))
          (body-1 (dgeomgetbody geom-id-1))
          (max-collisions 10))
-    (cffi:with-foreign-slots
-        ((world-ptr joint-grp-ptr) data (:struct col-data))
-      (cffi:with-foreign-object
-          (contact-geom-arr '(:struct dcontactgeom) max-collisions)
+    (cffi:with-foreign-slots ((world-ptr joint-grp-ptr) data (:struct col-data))
+      (cffi:with-foreign-object (contact-arr '(:struct dcontact) max-collisions)
         (let ((col-count
                (dcollide geom-id-0 geom-id-1 max-collisions
-                         contact-geom-arr
+                         (cffi:foreign-slot-pointer
+                          contact-arr '(:struct dcontact) 'geom)
                          +step-col-skip-size+)))
-          (loop :for i :below (print col-count) :do
-             (let* ((elem-ptr (cffi:mem-aptr contact-geom-arr
-                                             '(:struct dcontactgeom)
+          (loop :for i :below col-count :do
+             (let* ((elem-ptr (cffi:mem-aptr contact-arr
+                                             '(:struct dcontact)
                                              i))
-                    (j (djointcreatecontact
-                        world-ptr
-                        joint-grp-ptr
-                        elem-ptr)))
-               (djointattach j body-0 body-1)))))))
+                    (surface (cffi:foreign-slot-pointer
+                              elem-ptr
+                              '(:struct dcontact)
+                              'surface)))
+               (cffi:with-foreign-slots
+                   ((mode mu mu2 bounce bounce-vel soft-cfm)
+                    surface (:struct dsurfaceparameters))
+                 (setf mode (logior dcontactbounce dcontactsoftcfm))
+                 (setf mu most-positive-single-float)
+                 (setf mu2 0s0)
+                 (setf bounce 0.01)
+                 (setf bounce-vel 0.1)
+                 (setf soft-cfm 0.01))
+               (djointattach
+                (djointcreatecontact world-ptr joint-grp-ptr elem-ptr)
+                body-0 body-1)))))))
   (values))
 
 (defun step-collisions (world collision-space joint-group)
@@ -88,9 +98,8 @@
                    data
                    (cffi:callback %step-collisions-callback))))
 
-;; May be useful in near-callback
-;; (early-out (and (not (cffi:null-pointer-p body-0))
-;;                 (not (cffi:null-pointer-p body-1))
-;;                 (dareconnectedexcluding
-;;                  body-0 body-1 djointtypecontact)))
-;;(unless early-out)
+(defun connected-by-a-point-p (body-0 body-1)
+  (and (not (cffi:null-pointer-p body-0))
+       (not (cffi:null-pointer-p body-1))
+       (dareconnectedexcluding
+        body-0 body-1 djointtypecontact)))
