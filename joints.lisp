@@ -2,3 +2,7 @@
 
 (defun create-joint-group ()
   (make-phys-joint-group :ptr (djointgroupcreate 0)))
+
+(defun clear-joint-group (joint-group)
+  (let ((ptr (phys-joint-group-ptr joint-group)))
+    (djointgroupempty ptr)))

@@ -96,3 +96,8 @@
   (let ((ptr (phys-world-ptr world)))
     (dworldsetautodisableflag ptr (if value 1 0))
     value))
+
+;;------------------------------------------------------------
+
+(defun step-world (world)
+  (dworldquickstep (phys-world-ptr world) 0.04))

@@ -55,4 +55,10 @@
 ;; nearCallback routine in the next section.
 
 (defun step-physics ()
-  )
+  (step-collisions my-world my-col-space my-joint-group)
+  (step-world my-world)
+  (clear-joint-group my-joint-group))
+
+(defun step-loop ()
+  (step-physics)
+  (print (phys-object-position my-obj)))

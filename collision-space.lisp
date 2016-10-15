@@ -42,3 +42,38 @@
     (dspacecollide (phys-collision-space-ptr collision-space)
                    (cffi:null-pointer)
                    (cffi:callback %near-callback))))
+
+;;------------------------------------------------------------
+
+(defconstant +step-col-skip-size+ (cffi:foreign-type-size 'dgeomid))
+
+(cffi:defcstruct col-data
+  (world-ptr :pointer)
+  (joint-grp-ptr :pointer))
+
+(cffi:defcallback %step-collisions-callback
+    :void ((data :pointer) (geom-id-0 dgeomid) (geom-id-1 dgeomid))
+  (let ((max-collisions 10)
+        (body-0 (dgeomgetbody geom-id-0))
+        (body-1 (dgeomgetbody geom-id-1)))
+    (cffi:with-foreign-slots ((world-ptr joint-grp-ptr) data (:struct col-data))
+      (cffi:with-foreign-object (contact-geom-arr '(:struct dcontactgeom)
+                                                  max-collisions)
+        (loop :for i :below (dcollide geom-id-0 geom-id-1 max-collisions
+                                      contact-geom-arr +step-col-skip-size+) :do
+           (let ((c (djointcreatecontact
+                     world-ptr joint-grp-ptr (cffi:mem-aptr contact-geom-arr i))))
+
+             (djointattach c body-0 body-1))))))
+  (values))
+
+(defun step-collisions (world collision-space joint-group)
+  "Let lode update & handle the collisions"
+  (cffi:with-foreign-object (data '(:struct col-data))
+    (cffi:with-foreign-slots ((world-ptr joint-grp-ptr) data
+                              (:struct col-data))
+      (setf world-ptr (phys-world-ptr world))
+      (setf joint-grp-ptr (phys-joint-group-ptr joint-group)))
+    (dspacecollide (phys-collision-space-ptr collision-space)
+                   data
+                   (cffi:callback %step-collisions-callback))))
