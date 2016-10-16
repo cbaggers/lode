@@ -8,9 +8,11 @@
   :description "Lispy abstraction over ODE"
   :author "Baggers <techsnuffle@gmail.com>"
   :license "BSD 2 Clause"
+  :encoding :utf-8
   :serial t
-  :depends-on (#:raw-bindings-ode #:cffi #:uiop #:structy-defclass
-                                  #:rtg-math #:fn)
+  :depends-on (#:raw-bindings-ode
+               #:cffi #:uiop #:structy-defclass #:rtg-math
+               #:fn)
   :components ((:file "package")
                (:file "vars")
                (:file "extra-bindings")

@@ -20,7 +20,7 @@
   ;;
   (unless my-world
     (setf my-world (create-world))
-    (setf (world-gravity my-world) (v! 0 -10 0))
+    (setf (world-gravity my-world) (v! 0 -1 0))
     (setf (world-constraint-force-mixing my-world) 0.001) ;;from cl-ode
     (setf (world-linear-damping my-world) 0.001) ;;from cl-ode
     (setf (world-angular-damping my-world) 0.005) ;;from cl-ode
@@ -35,7 +35,7 @@
     (setf my-joint-group (create-joint-group)))
   ;;
   (unless my-plane
-    (setf my-plane (create-plane my-col-space (v! 0 1 0) 2s0)))
+    (setf my-plane (create-plane my-col-space (v! 0 1 0) 0s0)))
   ;;
   (unless my-obj
     (setf my-obj (make-phys-object my-world))
@@ -46,7 +46,7 @@
     ;;                                        (- (* (random 1s0) 2s0) 1s0)
     ;;                                        (- (* (random 1s0) 2s0) 1s0))
     ;;                                    (- (* (random 1s0) 10) 5)))
-    (phys-object-set-mass-sphere my-obj 1 5)
+    (phys-object-set-mass-sphere-total my-obj 1 2)
     (phys-object-add-geometry my-obj (create-sphere my-col-space 5)))
   t)
 
@@ -72,4 +72,6 @@
 
 (defun step-loop ()
   (step-physics)
-  (print (phys-object-position my-obj)))
+  (print "--")
+  (print (phys-object-position my-obj))
+  (print (phys-geometry-position (aref (phys-object-geometries my-obj) 0))))

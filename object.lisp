@@ -4,7 +4,8 @@
 ;;------------------------------------------------------------
 
 (defun make-phys-object (world &optional geometries)
-  (let* ((body (make-phys-body world))
+  (let* ((geometries (uiop:ensure-list geometries))
+         (body (make-phys-body world))
          (obj (%make-phys-object :body body)))
     (map nil λ(phys-object-add-geometry obj _) geometries)
     (let ((lookup-id (add-phys-object-to-world world obj)))
@@ -16,6 +17,9 @@
 (defun phys-object-add-geometry (phys-object geometry)
   (dgeomsetbody (phys-geometry-ptr geometry)
                 (phys-body-ptr (phys-object-body phys-object)))
+  (format t "Associated ~s with ~s (~s ~s)" geometry phys-object
+          (phys-geometry-ptr geometry)
+          (phys-body-ptr (phys-object-body phys-object)))
   (vector-push-extend geometry (phys-object-geometries phys-object))
   phys-object)
 

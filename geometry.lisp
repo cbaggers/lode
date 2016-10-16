@@ -36,3 +36,17 @@
 ;; dcreateplane
 ;; dcreateray
 ;; dcreatetrimesh
+
+;;------------------------------------------------------------
+
+(defun phys-geometry-position (phys-geom)
+  (let* ((geom-ptr (phys-geometry-ptr phys-geom))
+         (pos (dgeomgetposition geom-ptr)))
+    (v! (cffi:mem-aref pos :float 0)
+        (cffi:mem-aref pos :float 1)
+        (cffi:mem-aref pos :float 2))))
+
+(defun (setf phys-geom-position) (pos-v3 phys-geom)
+  (let* ((geom-ptr (phys-geometry-ptr phys-geom)))
+    (dgeomsetposition geom-ptr (v:x pos-v3) (v:y pos-v3) (v:z pos-v3))
+    pos-v3))

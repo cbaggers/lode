@@ -10,6 +10,14 @@
 
 ;;------------------------------------------------------------
 
+(defun %dbg-mass (phys-body)
+  (let* ((body-ptr (phys-body-ptr phys-body)))
+    (cffi:with-foreign-object (m '(:struct dmass))
+      (dbodygetmass body-ptr m)
+      (cffi:mem-aref m '(:struct dmass)))))
+
+;;------------------------------------------------------------
+
 (defun phys-body-position (phys-body)
   (let* ((body-ptr (phys-body-ptr phys-body))
          (pos (dbodygetposition body-ptr)))

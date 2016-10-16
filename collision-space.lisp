@@ -73,12 +73,13 @@
                               elem-ptr '(:struct dcontact) 'surface)))
                (populate-contact-entry
                 surface
-                :mode (logior dcontactbounce dcontactsoftcfm)
-                :mu sb-ext:single-float-positive-infinity
-                :mu2 0s0
+                :mode (logior dcontactbounce dcontactsoftcfm
+                              dcontactapprox1)
+                :mu 2s0 ;;sb-ext:single-float-positive-infinity
+                :mu2 2s0
                 :bounce 0.1
                 :bounce-vel 0.1
-                :soft-cfm 0.01)
+                :soft-cfm 1e-5)
                (djointattach
                 (djointcreatecontact world-ptr joint-grp-ptr elem-ptr)
                 body-0 body-1)))))))
@@ -129,20 +130,20 @@
                motion1 motion2 motionn)
          surface-ptr (:struct dsurfaceparameters))
       (setf mode mode^)
-      (setf soft-cfm soft-cfm^)
-      (setf soft-erp soft-erp^)
-      (setf mu mu^)
-      (setf mu2 mu2^)
-      (setf bounce bounce^)
-      (setf bounce-vel bounce-vel^)
-      (setf rho rho^)
-      (setf rho2 rho2^)
-      (setf rhon rhon^)
-      (setf slip1 slip1^)
-      (setf slip2 slip2^)
-      (setf motion1 motion1^)
-      (setf motion2 motion2^)
-      (setf motionn motionn^)))
+      (setf soft-cfm (float soft-cfm^))
+      (setf soft-erp (float soft-erp^))
+      (setf mu (float mu^))
+      (setf mu2 (float mu2^))
+      (setf bounce (float bounce^))
+      (setf bounce-vel (float bounce-vel^))
+      (setf rho (float rho^))
+      (setf rho2 (float rho2^))
+      (setf rhon (float rhon^))
+      (setf slip1 (float slip1^))
+      (setf slip2 (float slip2^))
+      (setf motion1 (float motion1^))
+      (setf motion2 (float motion2^))
+      (setf motionn (float motionn^))))
   surface-ptr)
 
 (defun connected-by-a-point-p (body-0 body-1)
