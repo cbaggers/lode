@@ -52,37 +52,42 @@
   (world-ptr :pointer)
   (joint-grp-ptr :pointer))
 
-;;dContactGeom
+(defun connected-by-a-point-p (body-0 body-1)
+  (and (not (cffi:null-pointer-p body-0))
+       (not (cffi:null-pointer-p body-1))
+       (dareconnectedexcluding
+        body-0 body-1 djointtypecontact)))
 
 (cffi:defcallback %step-collisions-callback
-    :void ((data :pointer) (geom-id-0 dgeomid) (geom-id-1 dgeomid))
-  (let* ((body-0 (dgeomgetbody geom-id-0))
-         (body-1 (dgeomgetbody geom-id-1))
-         (max-collisions 10))
-    (cffi:with-foreign-slots ((world-ptr joint-grp-ptr) data (:struct col-data))
-      (cffi:with-foreign-object (contact-arr '(:struct dcontact) max-collisions)
-        (let ((col-count
-               (dcollide geom-id-0 geom-id-1 max-collisions
-                         (cffi:foreign-slot-pointer
-                          contact-arr '(:struct dcontact) 'geom)
-                         +step-col-skip-size+)))
-          (loop :for i :below col-count :do
-             (let* ((elem-ptr (cffi:mem-aptr
-                               contact-arr '(:struct dcontact) i))
-                    (surface (cffi:foreign-slot-pointer
+    :void ((data :pointer) (geom-0 dgeomid) (geom-1 dgeomid))
+  (let* ((body-0 (dgeomgetbody geom-0))
+         (body-1 (dgeomgetbody geom-1))
+         (max-contacts 8))
+    (unless (connected-by-a-point-p body-0 body-1)
+      (cffi:with-foreign-slots ((world-ptr joint-grp-ptr) data (:struct col-data))
+        (cffi:with-foreign-object (contact-arr '(:struct dcontact) max-contacts)
+          (let ((col-count
+                 (dcollide geom-0 geom-1 max-contacts
+                           (cffi:foreign-slot-pointer
+                            contact-arr '(:struct dcontact) 'geom)
+                           +step-col-skip-size+)))
+            (loop :for i :below col-count :do
+               (let* ((elem-ptr (cffi:mem-aptr
+                                 contact-arr '(:struct dcontact) i))
+                      (surface (cffi:foreign-slot-pointer
                               elem-ptr '(:struct dcontact) 'surface)))
-               (populate-contact-entry
-                surface
-                :mode (logior dcontactbounce dcontactsoftcfm
-                              dcontactapprox1)
-                :mu 2s0 ;;sb-ext:single-float-positive-infinity
-                :mu2 2s0
-                :bounce 0.1
-                :bounce-vel 0.1
-                :soft-cfm 1e-5)
-               (djointattach
-                (djointcreatecontact world-ptr joint-grp-ptr elem-ptr)
-                body-0 body-1)))))))
+                 (populate-contact-entry
+                  surface
+                  :mode (logior dcontactbounce dcontactsoftcfm ;;dcontactapprox1
+                                )
+                  :mu sb-ext:single-float-positive-infinity
+                  :mu2 0s0
+                  :bounce 0.1
+                  :bounce-vel 0.1
+                  :soft-cfm 0.01 ;;fex 1e-5
+                  )
+                 (let ((c (djointcreatecontact world-ptr joint-grp-ptr elem-ptr)))
+                   (djointattach c body-0 body-1)))))))))
   (values))
 
 (defun step-collisions (world collision-space joint-group)
@@ -145,9 +150,3 @@
       (setf motion2 (float motion2^))
       (setf motionn (float motionn^))))
   surface-ptr)
-
-(defun connected-by-a-point-p (body-0 body-1)
-  (and (not (cffi:null-pointer-p body-0))
-       (not (cffi:null-pointer-p body-1))
-       (dareconnectedexcluding
-        body-0 body-1 djointtypecontact)))

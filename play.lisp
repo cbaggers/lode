@@ -18,15 +18,19 @@
 (defun init-play ()
   (init)
   ;;
-  (unless my-world
+  (unless my-world ;;fex possible ordering issues? joint could be made before soem of these
     (setf my-world (create-world))
     (setf (world-gravity my-world) (v! 0 -1 0))
-    (setf (world-constraint-force-mixing my-world) 0.001) ;;from cl-ode
-    (setf (world-linear-damping my-world) 0.001) ;;from cl-ode
-    (setf (world-angular-damping my-world) 0.005) ;;from cl-ode
-    ;;(setf (world-contact-max-correcting-velocity my-world) 0.9)
-    ;;(setf (world-contact-surface-layer my-world) 0.001)
+    (setf (world-constraint-force-mixing my-world) 1e-5)
     (setf (world-auto-disable my-world) t))
+    (setf (world-linear-damping my-world) 0.00001);;fex
+    (setf (world-angular-damping my-world) 0.005) ;;fex
+    (setf (world-max-angular-speed my-world) 200);;fex
+    (setf (world-contact-max-correcting-velocity my-world) 0.1);;fex
+    (setf (world-contact-surface-layer my-world) 0.001);;fex
+
+  (dWorldSetAutoDisableAverageSamplesCount (phys-world-ptr my-world) 10) ;;fex
+
   ;;
   (unless my-col-space
     (setf my-col-space (create-collision-space :kind :hash)))
@@ -36,18 +40,15 @@
   ;;
   (unless my-plane
     (setf my-plane (create-plane my-col-space (v! 0 1 0) 0s0)))
+
   ;;
   (unless my-obj
-    (setf my-obj (make-phys-object my-world))
-    (setf (phys-object-position my-obj) (v! 2 20 -5))
-    (setf (phys-object-linear-velocity my-obj) (v! 0 0 0))
-    ;; (setf (phys-object-rotation my-obj)
-    ;;       (m3:rotation-from-axis-angle (v! (- (* (random 1s0) 2s0) 1s0)
-    ;;                                        (- (* (random 1s0) 2s0) 1s0)
-    ;;                                        (- (* (random 1s0) 2s0) 1s0))
-    ;;                                    (- (* (random 1s0) 10) 5)))
-    (phys-object-set-mass-sphere-total my-obj 1 2)
-    (phys-object-add-geometry my-obj (create-sphere my-col-space 5)))
+    (let ((radius 0.3))
+      (setf my-obj (make-phys-object my-world))
+      (setf (phys-object-position my-obj) (v! 2 20 -5))
+      (setf (phys-object-linear-velocity my-obj) (v! 0 0 0))
+      (phys-object-set-mass-sphere my-obj 5 radius) ;;fex
+      (phys-object-add-geometry my-obj (create-sphere my-col-space radius))))
   t)
 
 (defun deinit ()
@@ -67,7 +68,7 @@
 
 (defun step-physics ()
   (step-collisions my-world my-col-space my-joint-group)
-  (step-world my-world 0.05)
+  (step-world my-world 0.02)
   (clear-joint-group my-joint-group))
 
 (defun step-loop ()

@@ -90,6 +90,19 @@
 
 ;;------------------------------------------------------------
 
+(defun world-max-angular-speed (world)
+  "This function sets the velocity that interpenetrating objects will separate
+   at. The default value is infinity."
+  (let ((ptr (phys-world-ptr world)))
+    (dworldgetmaxangularspeed ptr)))
+
+(defun (setf world-max-angular-speed) (value world)
+  (let ((ptr (phys-world-ptr world)))
+    (dworldsetmaxangularspeed ptr (float value))
+    value))
+
+;;------------------------------------------------------------
+
 (defun world-contact-surface-layer (world)
   "This function sets the depth of the surface layer around the world objects.
    Contacts are allowed to sink into each other up to this depth. Setting it to
@@ -116,8 +129,10 @@
     (> (dworldgetautodisableflag ptr) 0)))
 
 (defun (setf world-auto-disable) (value world)
-  (let ((ptr (phys-world-ptr world)))
-    (dworldsetautodisableflag ptr (if value 1 0))
+  (let ((ptr (phys-world-ptr world))
+        (val (if value 1 0)))
+    (format t "Set world ~s autodisable to ~s" world val)
+    (dworldsetautodisableflag ptr val)
     value))
 
 ;;------------------------------------------------------------

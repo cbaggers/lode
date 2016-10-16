@@ -6,7 +6,7 @@
         (warn "Lode: Will not initalize ODE as it is already initialized")
         nil)
       (progn
-        (dinitode)
+        (dinitode2 0)
         (setf *initialized* t))))
 
 (defun %uninit ()
