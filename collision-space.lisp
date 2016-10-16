@@ -9,6 +9,7 @@
          (space-ptr
           (case kind
             (:simple (dsimplespacecreate parent-id))
+            (:hash (dhashspacecreate parent-id))
             (otherwise (error "Collision space kind ~s not known" kind)))))
     (make-phys-collision-space :ptr space-ptr)))
 
@@ -66,22 +67,18 @@
                           contact-arr '(:struct dcontact) 'geom)
                          +step-col-skip-size+)))
           (loop :for i :below col-count :do
-             (let* ((elem-ptr (cffi:mem-aptr contact-arr
-                                             '(:struct dcontact)
-                                             i))
+             (let* ((elem-ptr (cffi:mem-aptr
+                               contact-arr '(:struct dcontact) i))
                     (surface (cffi:foreign-slot-pointer
-                              elem-ptr
-                              '(:struct dcontact)
-                              'surface)))
-               (cffi:with-foreign-slots
-                   ((mode mu mu2 bounce bounce-vel soft-cfm)
-                    surface (:struct dsurfaceparameters))
-                 (setf mode (logior dcontactbounce dcontactsoftcfm))
-                 (setf mu most-positive-single-float)
-                 (setf mu2 0s0)
-                 (setf bounce 0.01)
-                 (setf bounce-vel 0.1)
-                 (setf soft-cfm 0.01))
+                              elem-ptr '(:struct dcontact) 'surface)))
+               (populate-contact-entry
+                surface
+                :mode (logior dcontactbounce dcontactsoftcfm)
+                :mu sb-ext:single-float-positive-infinity
+                :mu2 0s0
+                :bounce 0.1
+                :bounce-vel 0.1
+                :soft-cfm 0.01)
                (djointattach
                 (djointcreatecontact world-ptr joint-grp-ptr elem-ptr)
                 body-0 body-1)))))))
@@ -97,6 +94,56 @@
     (dspacecollide (phys-collision-space-ptr collision-space)
                    data
                    (cffi:callback %step-collisions-callback))))
+
+(defun populate-contact-entry
+    (surface-ptr
+     &key (mode 0)
+       (soft-cfm 0s0) (soft-erp 0s0)
+       (mu 0s0) (mu2 0s0)
+       (bounce 0s0) (bounce-vel 0s0)
+       (rho 0s0) (rho2 0s0) (rhon 0s0)
+       (slip1 0s0) (slip2 0s0)
+       (motion1 0s0) (motion2 0s0) (motionn 0s0))
+  ;;
+  (let ((mode^ mode)
+        (soft-cfm^ soft-cfm)
+        (soft-erp^ soft-erp)
+        (mu^ mu)
+        (mu2^ mu2)
+        (bounce^ bounce)
+        (bounce-vel^ bounce-vel)
+        (rho^ rho)
+        (rho2^ rho2)
+        (rhon^ rhon)
+        (slip1^ slip1)
+        (slip2^ slip2)
+        (motion1^ motion1)
+        (motion2^ motion2)
+        (motionn^ motionn))
+    (cffi:with-foreign-slots
+        ((mode soft-cfm soft-erp
+               mu mu2
+               bounce bounce-vel
+               rho rho2 rhon
+               slip1 slip2
+               motion1 motion2 motionn)
+         surface-ptr (:struct dsurfaceparameters))
+      (setf mode mode^)
+      (setf soft-cfm soft-cfm^)
+      (setf soft-erp soft-erp^)
+      (setf mu mu^)
+      (setf mu2 mu2^)
+      (setf bounce bounce^)
+      (setf bounce-vel bounce-vel^)
+      (setf rho rho^)
+      (setf rho2 rho2^)
+      (setf rhon rhon^)
+      (setf slip1 slip1^)
+      (setf slip2 slip2^)
+      (setf motion1 motion1^)
+      (setf motion2 motion2^)
+      (setf motionn motionn^)))
+  surface-ptr)
 
 (defun connected-by-a-point-p (body-0 body-1)
   (and (not (cffi:null-pointer-p body-0))

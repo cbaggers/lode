@@ -3,8 +3,10 @@
 ;;------------------------------------------------------------
 
 (defun make-phys-body (world)
-  (let ((world-ptr (phys-world-ptr world)))
-    (%make-phys-body :ptr (dbodycreate world-ptr))))
+  (let* ((world-ptr (phys-world-ptr world))
+         (bptr (dbodycreate world-ptr)))
+    (dbodyenable bptr) ;; from cl-ode
+    (%make-phys-body :ptr bptr)))
 
 ;;------------------------------------------------------------
 

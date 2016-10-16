@@ -17,29 +17,37 @@
 
 (defun init-play ()
   (init)
+  ;;
   (unless my-world
     (setf my-world (create-world))
-    (setf (world-gravity my-world) (v! 0 -1 0))
-    (setf (world-contact-max-correcting-velocity my-world) 0.9)
-    (setf (world-contact-surface-layer my-world) 0.001)
-    (setf (world-auto-disable my-world) t)
-    )
+    (setf (world-gravity my-world) (v! 0 -10 0))
+    (setf (world-constraint-force-mixing my-world) 0.001) ;;from cl-ode
+    (setf (world-linear-damping my-world) 0.001) ;;from cl-ode
+    (setf (world-angular-damping my-world) 0.005) ;;from cl-ode
+    ;;(setf (world-contact-max-correcting-velocity my-world) 0.9)
+    ;;(setf (world-contact-surface-layer my-world) 0.001)
+    (setf (world-auto-disable my-world) t))
+  ;;
   (unless my-col-space
-    (setf my-col-space (create-collision-space)))
+    (setf my-col-space (create-collision-space :kind :hash)))
+  ;;
   (unless my-joint-group
     (setf my-joint-group (create-joint-group)))
+  ;;
   (unless my-plane
-    (setf my-plane (create-plane my-col-space)))
+    (setf my-plane (create-plane my-col-space (v! 0 1 0) 2s0)))
+  ;;
   (unless my-obj
     (setf my-obj (make-phys-object my-world))
-    (setf (phys-object-position my-obj) (v! 0 10 -5))
+    (setf (phys-object-position my-obj) (v! 2 20 -5))
+    (setf (phys-object-linear-velocity my-obj) (v! 0 0 0))
     ;; (setf (phys-object-rotation my-obj)
     ;;       (m3:rotation-from-axis-angle (v! (- (* (random 1s0) 2s0) 1s0)
     ;;                                        (- (* (random 1s0) 2s0) 1s0)
     ;;                                        (- (* (random 1s0) 2s0) 1s0))
     ;;                                    (- (* (random 1s0) 10) 5)))
-    (phys-object-set-mass-box my-obj 0.5 (v! 2 2 2))
-    (phys-object-add-geometry my-obj (create-box my-col-space (v! 2 2 2))))
+    (phys-object-set-mass-sphere my-obj 1 5)
+    (phys-object-add-geometry my-obj (create-sphere my-col-space 5)))
   t)
 
 (defun deinit ()
@@ -59,7 +67,7 @@
 
 (defun step-physics ()
   (step-collisions my-world my-col-space my-joint-group)
-  (step-world my-world 0.04)
+  (step-world my-world 0.05)
   (clear-joint-group my-joint-group))
 
 (defun step-loop ()

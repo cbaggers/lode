@@ -21,6 +21,11 @@
 
 ;;------------------------------------------------------------
 
+(defun create-sphere (space radius)
+  (make-phys-sphere
+   :ptr (dcreatesphere (phys-collision-space-ptr space)
+                       (float radius))))
+
 ;; dcreatecapsule
 ;; dcreateconvex
 ;; dcreatecylinder
@@ -30,5 +35,4 @@
 ;; dcreateheightfield
 ;; dcreateplane
 ;; dcreateray
-;; dcreatesphere
 ;; dcreatetrimesh

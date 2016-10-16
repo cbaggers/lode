@@ -54,6 +54,27 @@
     (dworldsetcfm ptr (float value))
     value))
 
+(defun world-linear-damping (world)
+  (let ((ptr (phys-world-ptr world)))
+    (dworldgetlineardamping ptr)))
+
+(defun (setf world-linear-damping) (value world)
+  (let ((ptr (phys-world-ptr world)))
+    (dworldsetlineardamping ptr (float value))))
+
+(defun world-angular-damping (world)
+  (let ((ptr (phys-world-ptr world)))
+    (dworldgetangulardamping ptr)))
+
+(defun (setf world-angular-damping) (value world)
+  (let ((ptr (phys-world-ptr world)))
+    (dworldsetangulardamping ptr (float value))))
+
+(defun world-damping (world)
+  (let ((ptr (phys-world-ptr world)))
+    (values (dworldgetlineardamping ptr)
+            (dworldgetangulardamping ptr))))
+
 ;;------------------------------------------------------------
 
 (defun world-contact-max-correcting-velocity (world)
@@ -103,3 +124,6 @@
 
 (defun step-world (world step-size)
   (dworldquickstep (phys-world-ptr world) step-size))
+
+(defun step-world-precisely (world step-size)
+  (dworldstep (phys-world-ptr world) step-size))
